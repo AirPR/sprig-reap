@@ -5,7 +5,13 @@ module Sprig::Reap
     alias tsort_each_node each_key
 
     def tsort_each_child(node, &block)
-      fetch(node).each(&block)
+      begin
+        fetch(node).each(&block)
+      rescue KeyError
+        dependency_parent = nil
+        self.each {|model, dependencies| if dependencies.include?(node); dependency_parent = model; break; end}
+        raise "Dependencies must be exported together. `#{dependency_parent.name}` requires `#{node.name}` which was not included in the models."
+      end
     end
 
     def resolve_circular_habtm_dependencies!
