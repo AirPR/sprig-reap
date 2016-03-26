@@ -1,5 +1,6 @@
 module Sprig::Reap
   class Value
+    include Logging
     attr_reader :sprig_record, :record, :attribute, :value, :raw_value
 
     delegate :model, :sprig_id, :to => :sprig_record
@@ -17,7 +18,10 @@ module Sprig::Reap
     end
 
     def for_sprig_file
-      @for_sprig_file ||= dependency? ? sprig_dependency_reference : read_attribute
+      @for_sprig_file ||= begin
+        log_error "Missing dependency for [#{record.class} #{record.id}].#{attribute} = #{record.send(attribute.to_sym)}" if (dependency? && record.send(attribute.to_sym) && sprig_dependency_reference.nil?)
+        dependency? ? sprig_dependency_reference : read_attribute
+      end
     end
 
     private
