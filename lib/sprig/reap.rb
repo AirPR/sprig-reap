@@ -20,10 +20,12 @@ module Sprig::Reap
       options = input.to_hash
 
       configure do |config|
-        config.target_env       = options[:target_env]       || options['TARGET_ENV']
-        config.models           = options[:models]           || options['MODELS']
-        config.ignored_attrs    = options[:ignored_attrs]    || options['IGNORED_ATTRS']
-        config.omit_empty_attrs = options[:omit_empty_attrs] || options['OMIT_EMPTY_ATTRS']
+        config.target_env           = options[:target_env]            || options['TARGET_ENV']
+        config.classes              = options[:models]                || options['MODELS']
+        config.ignored_attrs        = options[:ignored_attrs]         || options['IGNORED_ATTRS']
+        config.ignored_dependencies = options[:ignored_dependencies]  || options['IGNORED_DEPENDENCIES']
+        config.omit_empty_attrs     = options[:omit_empty_attrs]      || options['OMIT_EMPTY_ATTRS']
+
       end
 
       log_debug "Reaping records from the database...\r"
@@ -44,6 +46,7 @@ module Sprig::Reap
     delegate :target_env,
              :models,
              :ignored_attrs,
+             :ignored_dependencies,
              :logger,
              :omit_empty_attrs,
              to: :configuration

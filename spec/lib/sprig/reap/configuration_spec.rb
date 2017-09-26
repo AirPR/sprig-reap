@@ -41,6 +41,14 @@ describe Sprig::Reap::Configuration do
 
       subject.models = Post
     end
+
+    context "when given an array of ActiveRecord::Relations" do
+      it "sets the classes" do
+        subject.classes = [Comment.where(id: 1)]
+
+        subject.classes.should == [Comment.where(id: 1)]
+      end
+    end
   end
 
   describe "#ignored_attrs" do
@@ -58,6 +66,49 @@ describe Sprig::Reap::Configuration do
       Sprig::Reap::Inputs::IgnoredAttrs.should_receive(:parse).with('boom, shaka, laka')
 
       subject.ignored_attrs = 'boom, shaka, laka'
+    end
+  end
+
+  describe "#ignored_dependencies" do
+    context "from a fresh configuration" do
+      it "it should have no ignored dependencies for a class" do
+        subject.ignored_dependencies(Post).should == []
+      end
+    end
+  end
+
+  describe "#ignored_dependencies=" do
+    context "when given nil" do
+      before { subject.ignored_attrs = nil }
+
+      it "it should have no ignored dependencies for a class" do
+        subject.ignored_dependencies(Post).should == []
+      end
+    end
+
+    context "when given an hash of ignored_dependencies" do
+      before do
+        subject.ignored_dependencies = {
+          post: [:user]
+        }
+      end
+
+      it "it should have the correct ignored dependencies for a class" do
+        subject.ignored_dependencies(Post).should == [:user]
+      end
+    end
+
+    context "when given a hash with an all key" do
+      before do
+        subject.ignored_dependencies = {
+          all: [:created_by],
+          post: [:poster]
+        }
+      end
+
+      it "should include those dependencies with any class" do
+        subject.ignored_dependencies(Post).should == [:poster, :created_by]
+      end
     end
   end
 
