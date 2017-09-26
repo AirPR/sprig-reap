@@ -21,7 +21,7 @@ module Sprig::Reap
 
       configure do |config|
         config.target_env           = options[:target_env]            || options['TARGET_ENV']
-        config.classes              = options[:models]                || options['MODELS']
+        config.models              = options[:models]                || options['MODELS']
         config.ignored_attrs        = options[:ignored_attrs]         || options['IGNORED_ATTRS']
         config.ignored_dependencies = options[:ignored_dependencies]  || options['IGNORED_DEPENDENCIES']
         config.omit_empty_attrs     = options[:omit_empty_attrs]      || options['OMIT_EMPTY_ATTRS']
