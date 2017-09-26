@@ -30,7 +30,11 @@ module Sprig::Reap
     end
 
     def dependencies
-      @dependencies ||= associations.flat_map(&:dependencies)
+      @dependencies ||= associations
+        .reject do |association|
+          Sprig::Reap.ignored_dependencies(klass).include?(association.association.name)
+        end
+        .flat_map(&:dependencies)
     end
 
     def associations
