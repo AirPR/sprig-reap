@@ -19,6 +19,9 @@ module Sprig::Reap
 
     def for_sprig_file
       @for_sprig_file ||= begin
+        if association
+          return if Sprig::Reap.ignored_dependencies(association.association.active_record).include?(association.association.name)
+        end
         log_error "Missing dependency for [#{record.class} #{record.id}].#{attribute} = #{record.send(attribute.to_sym)}" if (dependency? && record.send(attribute.to_sym) && sprig_dependency_reference.nil?)
         dependency? ? sprig_dependency_reference : read_attribute
       end
